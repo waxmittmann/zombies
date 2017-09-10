@@ -13,7 +13,6 @@ import javax.xml.soap.Text;
 
 class Assets {
     public static Texture sheet;
-    public static TextureRegion spring;
     public static Animation zombieA;
     public static Animation zombieB;
 
@@ -42,6 +41,10 @@ class Assets {
         return new Texture(Gdx.files.internal(file));
     }
 
+    public static void dispose() {
+        sheet.dispose();
+        // Need to dispose animation keyframes?
+    }
 }
 
 class HelloGdxScreen extends ScreenAdapter {
@@ -51,8 +54,6 @@ class HelloGdxScreen extends ScreenAdapter {
 
     public HelloGdxScreen() {
         batch = new SpriteBatch();
-        //img = new Texture("badlogic.jpg");
-
         Assets.load();
     }
 
@@ -71,15 +72,7 @@ class HelloGdxScreen extends ScreenAdapter {
         shapeRenderer.rect(200, 0, 200, 200);
         shapeRenderer.end();
 
-//        TextureRegion frame1 = new TextureRegion(Assets.sheet, 0, 0, 200, 200);
-//        TextureRegion frame2 = new TextureRegion(Assets.sheet, 0, 200, 200, 200);
-//        TextureRegion frame3 = new TextureRegion(Assets.sheet, 0, 400, 200, 200);
-//        TextureRegion frame4 = new TextureRegion(Assets.sheet, 0, 600, 200, 200);
-
         batch.begin();
-
-//        batch.draw(frame1, 0, 0);
-//        batch.draw(frame2, 0, 0);
 
         TextureRegion keyFrame = Assets.zombieA.getKeyFrame(stateTime, Animation.ANIMATION_LOOPING);
         batch.draw(keyFrame, 0, 0);
@@ -95,41 +88,19 @@ class HelloGdxScreen extends ScreenAdapter {
     @Override
     public void dispose () {
         batch.dispose();
-//        img.dispose();
+        Assets.dispose();
     }
 }
 
-//public class HelloGdx extends ApplicationAdapter {
 public class HelloGdx extends Game {
-    SpriteBatch batch;
-    Texture img;
-    float stateTime = 0;
 
     @Override
     public void create () {
-//        batch = new SpriteBatch();
-//        img = new Texture("badlogic.jpg");
-//
-//        Assets.load();
-
         this.setScreen(new HelloGdxScreen());
     }
 
     @Override
     public void render () {
         super.render();
-//        Gdx.gl.glClearColor(1, 0, 0, 1);
-//        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-//        batch.begin();
-//        batch.draw(img, 0, 0);
-//        TextureRegion keyFrame = Assets.zombieA.getKeyFrame(world.bob.stateTime, Animation.ANIMATION_LOOPING);
-//        batch.draw(keyFrame, 0, 0);
-//        batch.end();
     }
-
-//    @Override
-//    public void dispose () {
-//        batch.dispose();
-//        img.dispose();
-//    }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package me.mwittmann.hellogdx;
+package me.mwittmann.hellogdx.asset;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 

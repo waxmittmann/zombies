@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
+import javax.xml.soap.Text;
+
 class Assets {
     public static Texture sheet;
     public static TextureRegion spring;
@@ -16,7 +18,7 @@ class Assets {
     public static Animation zombieB;
 
     public static void load() {
-        sheet = loadTexture("ZombiesSpritesheet.png");
+        sheet = loadTexture("ZombiesSpritesheet2.png");
 
         //spring = new TextureRegion(sheet, 128, 0, 32, 32);
         zombieA = new Animation(
@@ -28,11 +30,11 @@ class Assets {
         );
 
         zombieB = new Animation(
-                0.2f,
-                new TextureRegion(sheet, 200, 0, 200, 200),
-                new TextureRegion(sheet, 200, 200, 200, 200),
-                new TextureRegion(sheet, 200, 400, 200, 200),
-                new TextureRegion(sheet, 200, 600, 200, 200)
+            0.2f,
+            new TextureRegion(sheet, 200, 0, 200, 200),
+            new TextureRegion(sheet, 200, 200, 200, 200),
+            new TextureRegion(sheet, 200, 400, 200, 200),
+            new TextureRegion(sheet, 200, 600, 200, 200)
         );
     }
 
@@ -44,12 +46,12 @@ class Assets {
 
 class HelloGdxScreen extends ScreenAdapter {
     SpriteBatch batch;
-    Texture img;
+    //Texture img;
     float stateTime = 0;
 
     public HelloGdxScreen() {
         batch = new SpriteBatch();
-        img = new Texture("badlogic.jpg");
+        //img = new Texture("badlogic.jpg");
 
         Assets.load();
     }
@@ -69,9 +71,16 @@ class HelloGdxScreen extends ScreenAdapter {
         shapeRenderer.rect(200, 0, 200, 200);
         shapeRenderer.end();
 
+//        TextureRegion frame1 = new TextureRegion(Assets.sheet, 0, 0, 200, 200);
+//        TextureRegion frame2 = new TextureRegion(Assets.sheet, 0, 200, 200, 200);
+//        TextureRegion frame3 = new TextureRegion(Assets.sheet, 0, 400, 200, 200);
+//        TextureRegion frame4 = new TextureRegion(Assets.sheet, 0, 600, 200, 200);
+
         batch.begin();
 
-        //batch.draw(img, 0, 0);
+//        batch.draw(frame1, 0, 0);
+//        batch.draw(frame2, 0, 0);
+
         TextureRegion keyFrame = Assets.zombieA.getKeyFrame(stateTime, Animation.ANIMATION_LOOPING);
         batch.draw(keyFrame, 0, 0);
 
@@ -86,7 +95,7 @@ class HelloGdxScreen extends ScreenAdapter {
     @Override
     public void dispose () {
         batch.dispose();
-        img.dispose();
+//        img.dispose();
     }
 }
 

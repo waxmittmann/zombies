@@ -25,12 +25,15 @@ public class GameScreen extends ScreenAdapter {
 
     Player player = new Player(new Position(50, 100));
 
-    private int width = 500;
-    private int height = 500;
+    private int width;
+    private int height;
 
     public GameScreen() {
         batch = new SpriteBatch();
         Assets.load();
+
+        width = Gdx.graphics.getWidth();
+        height = Gdx.graphics.getHeight();
 
         for (int i = 0; i < 20; i++) {
             int x = GlobalRandom.random.nextInt(width);
@@ -41,7 +44,6 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
-
         movePlayer();
 
         super.render(delta);

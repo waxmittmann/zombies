@@ -6,11 +6,15 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Assets {
     public static Texture sheet;
+    private static Texture sheet2;
+
+    public static TextureRegion player;
     public static Animation zombieA;
     public static Animation zombieB;
 
     public static void load() {
         sheet = loadTexture("ZombiesSpritesheet2.png");
+        sheet2 = loadTexture("PlayerSpritesheet.png");
 
         //spring = new TextureRegion(sheet, 128, 0, 32, 32);
         zombieA = new Animation(
@@ -28,6 +32,8 @@ public class Assets {
             new TextureRegion(sheet, 200, 400, 200, 200),
             new TextureRegion(sheet, 200, 600, 200, 200)
         );
+
+        player = new TextureRegion(sheet2, 0, 0, 200, 200);
     }
 
     public static Texture loadTexture (String file) {

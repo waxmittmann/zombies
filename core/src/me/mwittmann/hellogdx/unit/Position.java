@@ -16,4 +16,16 @@ public class Position {
     public Position withY(int _y) {
         return new Position(x, _y);
     }
+
+    public Position incY(int yDelta) {
+        return new Position(x, y + yDelta);
+    }
+
+    public Position incX(int xDelta) {
+        return new Position(x + xDelta, y);
+    }
+
+    public String toString() {
+        return "(" + x + ", " + y + ")";
+    }
 }

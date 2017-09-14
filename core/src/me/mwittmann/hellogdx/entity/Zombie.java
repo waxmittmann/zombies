@@ -1,36 +1,35 @@
 package me.mwittmann.hellogdx.entity;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import me.mwittmann.hellogdx.asset.Animation;
-import me.mwittmann.hellogdx.asset.Assets;
 import me.mwittmann.hellogdx.unit.Position;
+import me.mwittmann.hellogdx.unit.Vector2df;
 import me.mwittmann.hellogdx.util.GlobalRandom;
 
+// Todo: Inc state time
 public class Zombie {
-    private final Position position;
-    private final Animation animation;
+    private Position position;
 
-    float stateTime = 0;
-    float scale = 0.5f;
+    // Todo: Should store in renderer probably
+    public float stateTime = 0;
+
+    public final int type;
 
     public Zombie(Position position) {
         this.position = position;
 
         stateTime += GlobalRandom.random.nextFloat();
 
-        int type = GlobalRandom.random.nextInt(2);
-        if (type == 0)
-            animation = Assets.zombieA;
-        else
-            animation = Assets.zombieB;
+        type = GlobalRandom.random.nextInt(2);
     }
 
-    public void render(SpriteBatch batch, float delta) {
-        TextureRegion keyFrame = animation.getKeyFrame(stateTime, Animation.ANIMATION_LOOPING);
+    public void movePosition(Vector2df vector) {
+        position = position.incX(vector.x).incY(vector.y);
+    }
 
-        batch.draw(keyFrame, position.x, position.y, 0, 0, 200, 200, scale, scale, 0);
+    public Position getPosition() {
+        return position;
+    }
 
-        stateTime += delta;
+    public void setPosition(Position position) {
+        this.position = position;
     }
 }

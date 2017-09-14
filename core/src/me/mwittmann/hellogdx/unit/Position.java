@@ -1,27 +1,27 @@
 package me.mwittmann.hellogdx.unit;
 
 public class Position {
-    public final int x;
-    public final int y;
+    public final float x;
+    public final float y;
 
-    public Position(int x, int y) {
+    public Position(float x, float y) {
         this.x = x;
         this.y = y;
     }
 
-    public Position withX(int _x) {
+    public Position withX(float _x) {
         return new Position(_x, y);
     }
 
-    public Position withY(int _y) {
+    public Position withY(float _y) {
         return new Position(x, _y);
     }
 
-    public Position incY(int yDelta) {
+    public Position incY(float yDelta) {
         return new Position(x, y + yDelta);
     }
 
-    public Position incX(int xDelta) {
+    public Position incX(float xDelta) {
         return new Position(x + xDelta, y);
     }
 

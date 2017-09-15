@@ -36,14 +36,16 @@ public class GameScreen extends ScreenAdapter {
     float sinceLast = 0;
     float waitFor = 0.025f;
 
+    float gameFactor = 0.1f;
+
     public GameScreen() {
         Assets.load();
 
-        Dimensions2d gameDimensions = new Dimensions2d(200, 200);
+        Dimensions2d gameDimensions = new Dimensions2d(800, 800);
 
         gameObjects = new GameObjects(gameDimensions);
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 200; i++) {
             int x = GlobalRandom.random.nextInt((int)gameDimensions.x);
             int y = GlobalRandom.random.nextInt((int)gameDimensions.y);
             gameObjects.addZombie(new Zombie(new Position(x, y)));
@@ -71,12 +73,12 @@ public class GameScreen extends ScreenAdapter {
         int screenWidth = Gdx.graphics.getWidth();
         int screenHeight = Gdx.graphics.getHeight();
 
-        float gameWidth = 64.0f;
-        float gameHeight = 48.0f;
-
         // Not working
 //        float gameWidth =  screenWidth / 10;
 //        float gameHeight = screenHeight / 10;
+
+        float gameWidth = screenWidth * gameFactor;
+        float gameHeight = screenHeight * gameFactor;
 
         View view = new View(
             gameObjects.player.getPosition().x + gameObjects.player.getDimensions().x / 2, // The 50 is the player's game width/height atm
@@ -103,12 +105,29 @@ public class GameScreen extends ScreenAdapter {
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
             gameObjects.movePlayer(new Vector2df(0f, -playerSpeed * delta * factor));
         }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.MINUS)) {
+            this.gameFactor *= (1 + 0.5 * delta);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.EQUALS)) {
+            this.gameFactor /= (1 + 0.5 * delta);
+        }
+        if (this.gameFactor < 0.01)
+            this.gameFactor = 0.01f;
+        if (this.gameFactor > 10.0f)
+            this.gameFactor = 10.0f;
+
     }
 
     @Override
     public void dispose () {
         gameObjectsRenderer.dispose();
         Assets.dispose();
+    }
+
+
+    @Override
+    public void resize (int width, int height) {
     }
 
     private void printTicksCounter(float delta, GameObjects gameObjects) {

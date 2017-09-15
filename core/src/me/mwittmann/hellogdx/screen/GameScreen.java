@@ -20,169 +20,6 @@ import me.mwittmann.hellogdx.util.GlobalRandom;
 import java.util.ArrayList;
 import java.util.List;
 
-class View {
-    private final float gameX;
-    private final float gameY;
-    private final float gameWidth;
-    private final float gameHeight;
-
-    private final float screenX;
-    private final float screenY;
-    private final float screenWidth;
-    private final float screenHeight;
-
-    private final float xFactor;
-    private final float yFactor;
-
-    public View(
-        float gameX, float gameY, float gameWidth, float gameHeight,
-        int screenX, int screenY, int screenWidth, int screenHeight
-    ) {
-        this.gameX = gameX;
-        this.gameY = gameY;
-        this.gameWidth = gameWidth;
-        this.gameHeight = gameHeight;
-
-        this.screenX = screenX;
-        this.screenY = screenY;
-        this.screenWidth = screenWidth;
-        this.screenHeight = screenHeight;
-
-        this.xFactor = screenWidth / gameWidth;
-        this.yFactor = screenHeight / gameHeight;
-    }
-
-    public int translateX(float x) {
-        return (int)((x - gameX) * xFactor + screenX);
-    }
-
-    public int translateY(float y) {
-        return (int)((y - gameY) * yFactor + screenY);
-    }
-
-    public int translateWidth(float x) {
-        return (int)(x * xFactor);
-    }
-
-    public int translateHeight(float y) {
-        return (int)(y * yFactor);
-    }
-}
-
-class GameObjects {
-    private final Dimensions2d dimensions;
-    List<Zombie> zombies = new ArrayList<>();
-    Player player;
-
-    public GameObjects(Dimensions2d dimensions) {
-        this.dimensions = dimensions;
-        player = new Player(new Position(dimensions.x / 2, dimensions.y / 2));
-    }
-
-    public void addZombie(Zombie zombie) {
-        zombies.add(zombie);
-    }
-
-    public void movePlayer(Vector2df vector) {
-        player.movePosition(vector);
-    }
-
-    public void moveZombies(float deltaSeconds) {
-        for (Zombie zombie : zombies) {
-
-            Vector2df mv = zombie.getMove(deltaSeconds);
-            zombie.movePosition(mv);
-
-            if (zombie.getPosition().x < 0) {
-                zombie.setPosition(zombie.getPosition().withX(0));
-            } else if (zombie.getPosition().x > dimensions.x) {
-                zombie.setPosition(zombie.getPosition().withX(dimensions.x));
-            }
-
-            if (zombie.getPosition().y < 0) {
-                zombie.setPosition(zombie.getPosition().withY(0));
-            } else if (zombie.getPosition().y > dimensions.y) {
-                zombie.setPosition(zombie.getPosition().withY(dimensions.y));
-            }
-        }
-    }
-}
-
-
-class GameObjectsRenderer {
-    SpriteBatch batch = new SpriteBatch();
-
-    float zombieScale = 0.5f;
-
-    public void render(float delta, GameObjects gameObjects, View view) {
-        ShapeRenderer sr = new ShapeRenderer();
-        sr.setColor(1f, 0f, 0f, 1);
-        sr.begin(ShapeRenderer.ShapeType.Filled);
-        sr.circle(3, 3, 3);
-        sr.circle(3, 20, 3);
-        sr.end();
-
-        batch.begin();
-
-        for (Zombie zombie : gameObjects.zombies) {
-            renderZombie(zombie, view);
-        }
-
-        renderPlayer(gameObjects.player, view);
-
-        batch.end();
-    }
-
-    public void renderZombie(Zombie zombie, View view) {
-        Animation animation;
-        if (zombie.type == 0)
-            animation = Assets.zombieA;
-        else
-            animation = Assets.zombieB;
-
-        int x = view.translateX(zombie.getPosition().x);
-        int y = view.translateY(zombie.getPosition().y);
-
-        int width   = view.translateWidth(zombie.getDimensions().x);
-        int height  = view.translateHeight(zombie.getDimensions().y);
-
-        batch.draw(
-                animation.getKeyFrame(zombie.stateTime, Animation.ANIMATION_LOOPING),
-                x, y,
-                0, 0,
-                width, height,
-                //zombieScale, zombieScale,
-                1.0f, 1.0f,
-                0
-        );
-    }
-
-    public void renderPlayer(Player player, View view) {
-        TextureRegion playerTexture = Assets.player;
-
-        int x = view.translateX(player.getPosition().x);
-        int y = view.translateY(player.getPosition().y);
-
-        int width   = view.translateWidth(player.getDimensions().x);
-        int height  = view.translateHeight(player.getDimensions().y);
-
-        batch.draw(
-                playerTexture,
-                x, y,
-                0, 0,
-                width, height,
-                1.0f, 1.0f,
-                //zombieScale, zombieScale,
-                0
-        );
-    }
-
-    public void dispose() {
-        batch.dispose();
-    }
-}
-
-
 
 public class GameScreen extends ScreenAdapter {
 
@@ -194,6 +31,10 @@ public class GameScreen extends ScreenAdapter {
     public final float factor = 5.0f;
 
     int playerSpeed = 10;
+
+    int counter = 0;
+    float sinceLast = 0;
+    float waitFor = 0.025f;
 
     public GameScreen() {
         Assets.load();
@@ -208,10 +49,6 @@ public class GameScreen extends ScreenAdapter {
             gameObjects.addZombie(new Zombie(new Position(x, y)));
         }
     }
-
-    int counter = 0;
-    float sinceLast = 0;
-    float waitFor = 0.025f;
 
     @Override
     public void render(float deltaSeconds) {
@@ -247,7 +84,7 @@ public class GameScreen extends ScreenAdapter {
             gameWidth, gameHeight,
             screenWidth / 2, screenHeight / 2,
             screenWidth, screenHeight);
-        gameObjectsRenderer.render(deltaSeconds, gameObjects, view);
+        gameObjectsRenderer.render(gameObjects, view);
 
         stateTime += deltaSeconds;
         printTicksCounter(deltaSeconds, gameObjects);

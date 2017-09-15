@@ -48,7 +48,7 @@ public class Zombie {
 
     public Vector2df getMove(float deltaSeconds) {
         stateTime += deltaSeconds;
-        
+
         // If we've moved in the same direction for > 1 sec, consider changing direction
         if (movedCurrentDirection >= 1.0) {
             // 30% chance of direction change

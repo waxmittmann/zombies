@@ -59,15 +59,24 @@ class View {
     public int translateY(float y) {
         return (int)((y - gameY) * yFactor + screenY);
     }
+
+    public int translateWidth(float x) {
+        return (int)(x * xFactor);
+    }
+
+    public int translateHeight(float y) {
+        return (int)(y * yFactor);
+    }
 }
 
 class GameObjects {
     private final Dimensions2d dimensions;
     List<Zombie> zombies = new ArrayList<>();
-    Player player = new Player(new Position(50, 100));
+    Player player;
 
     public GameObjects(Dimensions2d dimensions) {
         this.dimensions = dimensions;
+        player = new Player(new Position(dimensions.x / 2, dimensions.y / 2));
     }
 
     public void addZombie(Zombie zombie) {
@@ -78,10 +87,12 @@ class GameObjects {
         player.movePosition(vector);
     }
 
-    public void moveZombies() {
+    public void moveZombies(float deltaSeconds) {
         for (Zombie zombie : zombies) {
-            Vector2df v = new Vector2df(GlobalRandom.random.nextInt(100) / 10.0f - 5.0f, GlobalRandom.random.nextInt(100) / 10.0f - 5.0f);
-            zombie.movePosition(v);
+
+            Vector2df mv = zombie.getMove(deltaSeconds);
+            zombie.movePosition(mv);
+
             if (zombie.getPosition().x < 0) {
                 zombie.setPosition(zombie.getPosition().withX(0));
             } else if (zombie.getPosition().x > dimensions.x) {
@@ -132,12 +143,16 @@ class GameObjectsRenderer {
         int x = view.translateX(zombie.getPosition().x);
         int y = view.translateY(zombie.getPosition().y);
 
+        int width   = view.translateWidth(zombie.getDimensions().x);
+        int height  = view.translateHeight(zombie.getDimensions().y);
+
         batch.draw(
                 animation.getKeyFrame(zombie.stateTime, Animation.ANIMATION_LOOPING),
                 x, y,
                 0, 0,
-                200, 200,
-                zombieScale, zombieScale,
+                width, height,
+                //zombieScale, zombieScale,
+                1.0f, 1.0f,
                 0
         );
     }
@@ -148,12 +163,16 @@ class GameObjectsRenderer {
         int x = view.translateX(player.getPosition().x);
         int y = view.translateY(player.getPosition().y);
 
+        int width   = view.translateWidth(player.getDimensions().x);
+        int height  = view.translateHeight(player.getDimensions().y);
+
         batch.draw(
                 playerTexture,
                 x, y,
                 0, 0,
-                200, 200,
-                zombieScale, zombieScale,
+                width, height,
+                1.0f, 1.0f,
+                //zombieScale, zombieScale,
                 0
         );
     }
@@ -172,23 +191,20 @@ public class GameScreen extends ScreenAdapter {
 
     float stateTime = 0;
 
-    private int width;
-    private int height;
-
-    public final float factor = 20.0f;
+    public final float factor = 5.0f;
 
     int playerSpeed = 10;
 
     public GameScreen() {
         Assets.load();
 
-        width = Gdx.graphics.getWidth();
-        height = Gdx.graphics.getHeight();
-        gameObjects = new GameObjects(new Dimensions2d(width, height));
+        Dimensions2d gameDimensions = new Dimensions2d(200, 200);
+
+        gameObjects = new GameObjects(gameDimensions);
 
         for (int i = 0; i < 20; i++) {
-            int x = GlobalRandom.random.nextInt(width);
-            int y = GlobalRandom.random.nextInt(height);
+            int x = GlobalRandom.random.nextInt((int)gameDimensions.x);
+            int y = GlobalRandom.random.nextInt((int)gameDimensions.y);
             gameObjects.addZombie(new Zombie(new Position(x, y)));
         }
     }
@@ -208,7 +224,7 @@ public class GameScreen extends ScreenAdapter {
         }
 
         movePlayer(deltaSeconds);
-        gameObjects.moveZombies();
+        gameObjects.moveZombies(deltaSeconds);
 
         super.render(deltaSeconds);
 
@@ -217,12 +233,17 @@ public class GameScreen extends ScreenAdapter {
 
         int screenWidth = Gdx.graphics.getWidth();
         int screenHeight = Gdx.graphics.getHeight();
-        float gameWidth = 640;
-        float gameHeight = 480;
+
+        float gameWidth = 64.0f;
+        float gameHeight = 48.0f;
+
+        // Not working
+//        float gameWidth =  screenWidth / 10;
+//        float gameHeight = screenHeight / 10;
 
         View view = new View(
-            gameObjects.player.getPosition().x + 50, // The 50 is the player's game width/height atm
-            gameObjects.player.getPosition().y + 50,
+            gameObjects.player.getPosition().x + gameObjects.player.getDimensions().x / 2, // The 50 is the player's game width/height atm
+            gameObjects.player.getPosition().y + gameObjects.player.getDimensions().y / 2,
             gameWidth, gameHeight,
             screenWidth / 2, screenHeight / 2,
             screenWidth, screenHeight);
@@ -245,12 +266,6 @@ public class GameScreen extends ScreenAdapter {
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
             gameObjects.movePlayer(new Vector2df(0f, -playerSpeed * delta * factor));
         }
-    }
-
-    @Override
-    public void resize (int width, int height) {
-        this.width = width;
-        this.height = height;
     }
 
     @Override

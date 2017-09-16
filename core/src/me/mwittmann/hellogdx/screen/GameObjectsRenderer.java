@@ -1,27 +1,22 @@
 package me.mwittmann.hellogdx.screen;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import me.mwittmann.hellogdx.asset.Animation;
 import me.mwittmann.hellogdx.asset.Assets;
 import me.mwittmann.hellogdx.entity.Player;
 import me.mwittmann.hellogdx.entity.Zombie;
+import me.mwittmann.hellogdx.util.DebugDraw;
 
 class GameObjectsRenderer {
     SpriteBatch batch = new SpriteBatch();
 
-    float zombieScale = 0.5f;
-
     public void render(GameObjects gameObjects, View view) {
-        ShapeRenderer sr = new ShapeRenderer();
-        sr.setColor(1f, 0f, 0f, 1);
-        sr.begin(ShapeRenderer.ShapeType.Filled);
-        sr.circle(3, 3, 3);
-        sr.circle(3, 20, 3);
-        sr.end();
+        DebugDraw.point(view.screenWidth / 2, view.screenHeight / 2, 10);
 
         batch.begin();
+        batch.setProjectionMatrix(batch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
 
         for (Zombie zombie : gameObjects.zombies) {
             renderZombie(zombie, view);
@@ -45,15 +40,8 @@ class GameObjectsRenderer {
         int width   = view.translateWidth(zombie.getDimensions().x);
         int height  = view.translateHeight(zombie.getDimensions().y);
 
-        batch.draw(
-                animation.getKeyFrame(zombie.stateTime, Animation.ANIMATION_LOOPING),
-                x, y,
-                0, 0,
-                width, height,
-                //zombieScale, zombieScale,
-                1.0f, 1.0f,
-                0
-        );
+        TextureRegion frame = animation.getKeyFrame(zombie.stateTime, Animation.ANIMATION_LOOPING);
+        batch.draw(frame, x, y, width, height);
     }
 
     public void renderPlayer(Player player, View view) {
@@ -65,15 +53,7 @@ class GameObjectsRenderer {
         int width   = view.translateWidth(player.getDimensions().x);
         int height  = view.translateHeight(player.getDimensions().y);
 
-        batch.draw(
-                playerTexture,
-                x, y,
-                0, 0,
-                width, height,
-                1.0f, 1.0f,
-                //zombieScale, zombieScale,
-                0
-        );
+        batch.draw(playerTexture, x, y, width, height);
     }
 
     public void dispose() {

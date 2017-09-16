@@ -1,18 +1,18 @@
 package me.mwittmann.hellogdx.screen;
 
-class View {
-    private final float gameX;
-    private final float gameY;
-    private final float gameWidth;
-    private final float gameHeight;
+public class View {
+    public final float gameX;
+    public final float gameY;
+    public final float gameWidth;
+    public final float gameHeight;
 
-    private final float screenX;
-    private final float screenY;
-    private final float screenWidth;
-    private final float screenHeight;
+    public final float screenX;
+    public final float screenY;
+    public final float screenWidth;
+    public final float screenHeight;
 
-    private final float xFactor;
-    private final float yFactor;
+    public final float xFactor;
+    public final float yFactor;
 
     public View(
         float gameX, float gameY, float gameWidth, float gameHeight,

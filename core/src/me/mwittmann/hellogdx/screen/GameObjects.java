@@ -9,7 +9,7 @@ import me.mwittmann.hellogdx.unit.Vector2df;
 import java.util.ArrayList;
 import java.util.List;
 
-class GameObjects {
+public class GameObjects {
     private final Dimensions2d dimensions;
     List<Zombie> zombies = new ArrayList<>();
     Player player;
@@ -45,5 +45,9 @@ class GameObjects {
                 zombie.setPosition(zombie.getPosition().withY(dimensions.y));
             }
         }
+    }
+
+    public Position getPlayerPosition() {
+        return player.getPosition();
     }
 }
